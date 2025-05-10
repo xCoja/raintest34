@@ -38,14 +38,8 @@ app.get('/leaderboard', async (req, res) => {
     // Log the valid users to see if the actual user is in the data
     console.log("Valid Users:", validUsers);
 
-    // Fill up with dummy users if there are fewer than 10
-    while (validUsers.length < 10) {
-      validUsers.push({
-        name: "-",
-        avatar: "questionmark.jpg",
-        wagered: 0,
-        prize: "None",
-      });
+    if (!validUsers || validUsers.length === 0) {
+      return res.status(404).json({ error: "No valid leaderboard data found" });
     }
 
     // Sort the valid users by 'wagered' in descending order
@@ -76,7 +70,7 @@ app.get('/leaderboard', async (req, res) => {
       return user;
     });
 
-    // Send the top 10 users as response
+    // Send the top users as response
     res.json({ results: validUsers });
   } catch (error) {
     console.error(error.message);
