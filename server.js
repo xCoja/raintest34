@@ -32,14 +32,16 @@ app.get('/leaderboard', async (req, res) => {
     // Log the raw API response for debugging
     console.log("Raw API Response:", response.data.results);
 
-    // Filter valid users (checking for 'name' instead of 'username')
-    let validUsers = response.data.results.filter(user => user.wagered && user.avatar && user.name);
+    let validUsers = response.data.results.filter(user => user.wagered && user.avatar && user.username);
 
-    // Log the valid users to see if the actual user is in the data
-    console.log("Valid Users:", validUsers);
-
-    if (!validUsers || validUsers.length === 0) {
-      return res.status(404).json({ error: "No valid leaderboard data found" });
+    // Fill up with dummy users if there are fewer than 10
+    while (validUsers.length < 10) {
+      validUsers.push({
+        username: "-",
+        avatar: "questionmark.jpg",
+        wagered: 0,
+        prize: "None",
+      });
     }
 
     // Sort the valid users by 'wagered' in descending order
@@ -70,8 +72,13 @@ app.get('/leaderboard', async (req, res) => {
       return user;
     });
 
-    // Send the top users as response
-    res.json({ results: validUsers });
+    // Limit the results to top 10 users (already done with filler users)
+    const topUsers = validUsers.slice(0, 10);
+
+    console.log("Top Users:", topUsers);
+
+    // Send the top 10 users as response
+    res.json({ results: topUsers });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ error: 'Failed to fetch leaderboard data' });
