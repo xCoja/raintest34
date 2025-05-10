@@ -32,11 +32,11 @@ app.get('/leaderboard', async (req, res) => {
     // Log the raw API response for debugging
     console.log("Raw API Response:", response.data.results);
 
-    // Filter valid users (changed from username to name)
+    // Filter valid users (checking for 'name' instead of 'username')
     let validUsers = response.data.results.filter(user => user.wagered && user.avatar && user.name);
 
-    // Log the valid users before adding fillers
-    console.log("Valid Users Before Fillers:", validUsers);
+    // Log the valid users to see if the actual user is in the data
+    console.log("Valid Users:", validUsers);
 
     // Fill up with dummy users if there are fewer than 10
     while (validUsers.length < 10) {
@@ -76,13 +76,8 @@ app.get('/leaderboard', async (req, res) => {
       return user;
     });
 
-    // Limit the results to top 10 users (already done with filler users)
-    const topUsers = validUsers.slice(0, 10);
-
-    console.log("Top Users:", topUsers);
-
     // Send the top 10 users as response
-    res.json({ results: topUsers });
+    res.json({ results: validUsers });
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ error: 'Failed to fetch leaderboard data' });
