@@ -32,12 +32,13 @@ app.get('/leaderboard', async (req, res) => {
     // Log the raw API response for debugging
     console.log("Raw API Response:", response.data.results);
 
-    let validUsers = response.data.results.filter(user => user.wagered && user.avatar && user.username);
+    // Filter valid users (changed from username to name)
+    let validUsers = response.data.results.filter(user => user.wagered && user.avatar && user.name);
 
     // Fill up with dummy users if there are fewer than 10
     while (validUsers.length < 10) {
       validUsers.push({
-        username: "-",
+        name: "-",
         avatar: "questionmark.jpg",
         wagered: 0,
         prize: "None",
