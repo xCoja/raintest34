@@ -37,7 +37,7 @@ app.get('/leaderboard', async (req, res) => {
     }
 
     // Map the fields correctly
-    const validUsers = response.data.results.filter(user => user.wagered && user.avatar && user.userdname);
+    const validUsers = response.data.results.filter(user => user.wagered && user.avatar && user.username);
 
     // Sort the valid users by 'wagered' in descending order
     const sortedUsers = validUsers.sort((a, b) => b.wagered - a.wagered);
