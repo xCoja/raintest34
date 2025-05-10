@@ -35,6 +35,9 @@ app.get('/leaderboard', async (req, res) => {
     // Filter valid users (changed from username to name)
     let validUsers = response.data.results.filter(user => user.wagered && user.avatar && user.name);
 
+    // Log the valid users before adding fillers
+    console.log("Valid Users Before Fillers:", validUsers);
+
     // Fill up with dummy users if there are fewer than 10
     while (validUsers.length < 10) {
       validUsers.push({
