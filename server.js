@@ -32,18 +32,48 @@ app.get('/leaderboard', async (req, res) => {
     // Log the raw API response for debugging
     console.log("Raw API Response:", response.data.results);
 
-    if (!response.data.results || response.data.results.length === 0) {
-      return res.status(404).json({ error: "No leaderboard data found" });
+    let validUsers = response.data.results.filter(user => user.wagered && user.avatar && user.username);
+
+    // Fill up with dummy users if there are fewer than 10
+    while (validUsers.length < 10) {
+      validUsers.push({
+        username: "-",
+        avatar: "questionmark.jpg",
+        wagered: 0,
+        prize: "None",
+      });
     }
 
-    // Map the fields correctly
-    const validUsers = response.data.results.filter(user => user.wagered && user.avatar && user.username);
-
     // Sort the valid users by 'wagered' in descending order
-    const sortedUsers = validUsers.sort((a, b) => b.wagered - a.wagered);
+    validUsers = validUsers.sort((a, b) => b.wagered - a.wagered);
 
-    // Limit the results to top 10 users
-    const topUsers = sortedUsers.slice(0, 10);
+    // Add prizes based on the place
+    validUsers = validUsers.map((user, index) => {
+      switch (index) {
+        case 0:
+          user.prize = 500;
+          break;
+        case 1:
+          user.prize = 250;
+          break;
+        case 2:
+          user.prize = 125;
+          break;
+        case 3:
+          user.prize = 75;
+          break;
+        case 4:
+          user.prize = 50;
+          break;
+        default:
+          user.prize = 0;
+          break;
+      }
+      return user;
+    });
+
+    // Limit the results to top 10 users (already done with filler users)
+    const topUsers = validUsers.slice(0, 10);
 
     console.log("Top Users:", topUsers);
 
